@@ -33,7 +33,8 @@ if ('IntersectionObserver' in window) {
 // Bring the supplied shader and crystal references together as one focused hero visual.
 const art = document.querySelector('.hero-art');
 const canvas = document.querySelector('#hero-canvas');
-if (art && canvas && window.THREE) {
+function initializeHeroScene() {
+  if (!art || !canvas || !window.THREE) return;
   try {
     const THREE = window.THREE;
     const scene = new THREE.Scene();
@@ -41,7 +42,7 @@ if (art && canvas && window.THREE) {
     camera.position.set(0, 0, 6.5);
 
     const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.7));
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, window.innerWidth < 680 ? 1.2 : 1.45));
     renderer.setClearColor(0x000000, 0);
     const core = new THREE.Group();
     scene.add(core);
@@ -79,7 +80,7 @@ if (art && canvas && window.THREE) {
           gl_FragColor = vec4(color, .97);
         }`,
     });
-    const blob = new THREE.Mesh(new THREE.SphereGeometry(1.27, 96, 96), blobMaterial);
+    const blob = new THREE.Mesh(new THREE.SphereGeometry(1.27, 64, 48), blobMaterial);
     core.add(blob);
 
     const crystal = new THREE.Mesh(
@@ -88,8 +89,9 @@ if (art && canvas && window.THREE) {
     );
     core.add(crystal);
 
-    const particlePositions = new Float32Array(440 * 3);
-    for (let i = 0; i < 440; i += 1) {
+    const particleCount = 260;
+    const particlePositions = new Float32Array(particleCount * 3);
+    for (let i = 0; i < particleCount; i += 1) {
       const radius = 1.9 + Math.random() * 1.8;
       const theta = Math.random() * Math.PI * 2;
       const z = Math.random() * 2 - 1;
@@ -128,11 +130,20 @@ if (art && canvas && window.THREE) {
     art.classList.add('webgl-ready');
 
     const clock = new THREE.Clock();
-    function render() {
-      requestAnimationFrame(render);
+    let frameId = 0;
+    let lastFrameTime = 0;
+    let isInView = true;
+    function render(now = 0) {
+      frameId = 0;
+      if (document.hidden || !isInView) return;
+      if (now - lastFrameTime < 1000 / 45) {
+        frameId = requestAnimationFrame(render);
+        return;
+      }
+      lastFrameTime = now;
       const time = clock.getElapsedTime();
-      targetX += (pointerX - targetX) * .10;
-      targetY += (pointerY - targetY) * .10;
+      targetX += (pointerX - targetX) * .14;
+      targetY += (pointerY - targetY) * .14;
       blobMaterial.uniforms.uTime.value = reducedMotion ? 0 : time;
       core.rotation.y = (reducedMotion ? 0 : time * .12) + targetX * .24;
       core.rotation.x = targetY * .18;
@@ -140,10 +151,53 @@ if (art && canvas && window.THREE) {
       crystal.rotation.x = -core.rotation.x * .6;
       particles.rotation.y = reducedMotion ? 0 : time * .018;
       renderer.render(scene, camera);
+      frameId = requestAnimationFrame(render);
     }
+    const visibilityObserver = new IntersectionObserver(([entry]) => {
+      isInView = entry.isIntersecting;
+      if (isInView && !document.hidden && !frameId) render();
+    }, { threshold: 0.01 });
+    visibilityObserver.observe(art);
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden && frameId) {
+        cancelAnimationFrame(frameId);
+        frameId = 0;
+      } else if (!document.hidden && isInView && !frameId) {
+        render();
+      }
+    });
     render();
   } catch (error) {
     // Keep the CSS illustration in place if WebGL is unavailable.
     console.info('3D hero unavailable; showing the static illustration.', error);
   }
 }
+
+function loadThreeAndStartHero() {
+  if (!art || !canvas) return;
+  if (window.THREE) {
+    initializeHeroScene();
+    return;
+  }
+  const threeScript = document.createElement('script');
+  threeScript.src = 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js';
+  threeScript.async = true;
+  threeScript.onload = initializeHeroScene;
+  // The CSS orb remains visible if WebGL or the CDN is unavailable.
+  document.head.appendChild(threeScript);
+}
+
+function scheduleHeroScene() {
+  const scheduleIdleLoad = () => {
+    if ('requestIdleCallback' in window) {
+      window.requestIdleCallback(loadThreeAndStartHero, { timeout: 1400 });
+    } else {
+      window.setTimeout(loadThreeAndStartHero, 700);
+    }
+  };
+  if (document.readyState === 'complete') scheduleIdleLoad();
+  else window.addEventListener('load', scheduleIdleLoad, { once: true });
+}
+
+scheduleHeroScene();
+
