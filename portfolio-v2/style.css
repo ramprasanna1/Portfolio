@@ -30,4 +30,5 @@ body::after{background-image:radial-gradient(1px 1px at 4% 15%,rgba(114,204,238,
 .hero-art>.orb,.hero-art>.orbit{transition:opacity .38s ease,visibility 0s linear .38s}
 .hero-art.webgl-ready>.orb,.hero-art.webgl-ready>.orbit{display:block;opacity:0;visibility:hidden}
 @media(prefers-reduced-motion:reduce){.hero-art>.orb,.hero-art>.orbit{transition:none}}
+@media (min-width:681px) and (max-height:820px){.hero-meta{margin-top:32px}}
 
