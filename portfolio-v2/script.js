@@ -41,8 +41,8 @@ function initializeHeroScene() {
     const camera = new THREE.PerspectiveCamera(42, 1, 0.1, 40);
     camera.position.set(0, 0, 6.5);
 
-    const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, window.innerWidth < 680 ? 1.2 : 1.45));
+    const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: false, powerPreference: 'low-power' });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, window.innerWidth < 680 ? 1.05 : 1.25));
     renderer.setClearColor(0x000000, 0);
     const core = new THREE.Group();
     scene.add(core);
@@ -80,7 +80,7 @@ function initializeHeroScene() {
           gl_FragColor = vec4(color, .97);
         }`,
     });
-    const blob = new THREE.Mesh(new THREE.SphereGeometry(1.27, 64, 48), blobMaterial);
+    const blob = new THREE.Mesh(new THREE.SphereGeometry(1.27, 48, 36), blobMaterial);
     core.add(blob);
 
     const crystal = new THREE.Mesh(
@@ -89,7 +89,7 @@ function initializeHeroScene() {
     );
     core.add(crystal);
 
-    const particleCount = 260;
+    const particleCount = 200;
     const particlePositions = new Float32Array(particleCount * 3);
     for (let i = 0; i < particleCount; i += 1) {
       const radius = 1.9 + Math.random() * 1.8;
