@@ -119,15 +119,16 @@ function initializeHeroScene() {
     });
     canvas.addEventListener('pointerleave', () => { pointerX = 0; pointerY = 0; });
 
-    const resize = new ResizeObserver(() => {
+    const resizeScene = () => {
       const width = Math.max(1, art.clientWidth);
       const height = Math.max(1, art.clientHeight);
       renderer.setSize(width, height, false);
       camera.aspect = width / height;
       camera.updateProjectionMatrix();
-    });
+    };
+    const resize = new ResizeObserver(resizeScene);
+    resizeScene();
     resize.observe(art);
-    art.classList.add('webgl-ready');
 
     const clock = new THREE.Clock();
     let frameId = 0;
@@ -151,6 +152,7 @@ function initializeHeroScene() {
       crystal.rotation.x = -core.rotation.x * .6;
       particles.rotation.y = reducedMotion ? 0 : time * .018;
       renderer.render(scene, camera);
+      if (!art.classList.contains('webgl-ready')) art.classList.add('webgl-ready');
       frameId = requestAnimationFrame(render);
     }
     const visibilityObserver = new IntersectionObserver(([entry]) => {
@@ -190,9 +192,9 @@ function loadThreeAndStartHero() {
 function scheduleHeroScene() {
   const scheduleIdleLoad = () => {
     if ('requestIdleCallback' in window) {
-      window.requestIdleCallback(loadThreeAndStartHero, { timeout: 1400 });
+      window.requestIdleCallback(loadThreeAndStartHero, { timeout: 250 });
     } else {
-      window.setTimeout(loadThreeAndStartHero, 700);
+      window.setTimeout(loadThreeAndStartHero, 160);
     }
   };
   if (document.readyState === 'complete') scheduleIdleLoad();
