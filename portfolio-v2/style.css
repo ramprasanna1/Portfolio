@@ -26,3 +26,8 @@ body::after{background-image:radial-gradient(1px 1px at 4% 15%,rgba(114,204,238,
 .hero{overflow-x:clip}
 @media(max-width:680px){.hero-art{right:0;width:74%;transform:scale(.9);overflow:clip}.tag-code{right:1%}.tag-test{left:1%}}
 
+/* Keep the instant orb visible until the first animated frame is drawn. */
+.hero-art>.orb,.hero-art>.orbit{transition:opacity .38s ease,visibility 0s linear .38s}
+.hero-art.webgl-ready>.orb,.hero-art.webgl-ready>.orbit{display:block;opacity:0;visibility:hidden}
+@media(prefers-reduced-motion:reduce){.hero-art>.orb,.hero-art>.orbit{transition:none}}
+
