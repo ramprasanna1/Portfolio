@@ -191,14 +191,7 @@ function loadThreeAndStartHero() {
 
 function scheduleHeroScene() {
   const startAfterFirstPaint = () => {
-    const scheduleIdleLoad = () => {
-      if ('requestIdleCallback' in window) {
-        window.requestIdleCallback(loadThreeAndStartHero, { timeout: 220 });
-      } else {
-        window.setTimeout(loadThreeAndStartHero, 80);
-      }
-    };
-    window.requestAnimationFrame(() => window.requestAnimationFrame(scheduleIdleLoad));
+    window.requestAnimationFrame(() => window.requestAnimationFrame(loadThreeAndStartHero));
   };
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', startAfterFirstPaint, { once: true });
