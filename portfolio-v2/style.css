@@ -19,3 +19,6 @@ body::after{background-image:radial-gradient(1px 1px at 4% 15%,rgba(114,204,238,
 .work{background:linear-gradient(180deg,rgba(11,15,25,.61),rgba(9,13,22,.61))}
 .contact{background:rgba(12,17,27,.62)}
 @keyframes star-glow{from{opacity:.48}to{opacity:.85}}
+.artifact-link{display:inline-flex;align-items:center;gap:7px;margin-left:auto;color:#86e2e5;border:1px solid #315367;padding:5px 8px;font:8px "DM Mono",monospace;letter-spacing:.045em;transition:background .2s,border-color .2s}.artifact-link:hover{background:#54c9d51a;border-color:#66cbd6;color:#d5ffff}
+
+
