@@ -22,3 +22,7 @@ body::after{background-image:radial-gradient(1px 1px at 4% 15%,rgba(114,204,238,
 .artifact-link{display:inline-flex;align-items:center;gap:7px;margin-left:auto;color:#86e2e5;border:1px solid #315367;padding:5px 8px;font:8px "DM Mono",monospace;letter-spacing:.045em;transition:background .2s,border-color .2s}.artifact-link:hover{background:#54c9d51a;border-color:#66cbd6;color:#d5ffff}
 
 
+/* Keep transformed hero art inside the page canvas at every breakpoint. */
+.hero{overflow-x:clip}
+@media(max-width:680px){.hero-art{right:0;width:74%;transform:scale(.9);overflow:clip}.tag-code{right:1%}.tag-test{left:1%}}
+
